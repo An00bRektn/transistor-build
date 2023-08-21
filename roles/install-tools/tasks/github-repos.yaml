@@ -1,0 +1,54 @@
+---
+- name: "Installing useful github repos"
+  git:
+    repo: "{{ item.repo }}"
+    dest: "{{ item.location }}"
+  loop:
+    - { repo: "https://github.com/Flangvik/SharpCollection", location: "/opt/SharpCollection" }
+    - { repo: "https://github.com/0xjbb/static-nmap", location: "/opt/static-nmap" }
+    - { repo: "https://github.com/cddmp/enum4linux-ng", location: "/opt/enum4linux-ng" }
+    - { repo: "https://github.com/urbanadventurer/username-anarchy", location: "/opt/username-anarchy"}
+  become: true
+  become_method: sudo
+
+- name: Create temporary build directory
+  ansible.builtin.tempfile:
+    state: directory
+  register: build_dir
+
+- name: "Copying python script to download github releases"
+  copy:
+    src: "files/githubdownload.py"
+    dest: "{{ build_dir.path }}/githubdownload.py"
+    owner: root
+    group: root
+    mode: 0755
+  become: true
+  become_method: sudo
+
+- name: "Downloading github releases"
+  shell: "{{ build_dir.path }}/githubdownload.py {{ item.repo }} {{ item.regex }} {{ item.location }} {% if item.filename is defined %}{{ item.filename }}{% endif %}"
+  loop:
+    - { repo: "jpillora/chisel",  regex: "_linux_amd64.gz", location: "/opt/chisel" }
+    - { repo: "jpillora/chisel",  regex: "_windows_amd64.gz", location: "/opt/chisel" }
+    #- { repo: "jpillora/chisel",  regex: "_darwin_amd64", location: "/opt/chisel", filename: "chisel_osx" }
+    - { repo: "nicocha30/ligolo-ng", regex: "agent_.*_linux_amd64.gz", location: "/opt/ligolo-ng" }
+    - { repo: "nicocha30/ligolo-ng", regex: "proxy_.*_linux_amd64.gz", location: "/opt/ligolo-ng" }
+    - { repo: "nicocha30/ligolo-ng", regex: "agent_.*_windows_amd64.gz", location: "/opt/ligolo-ng" }
+    - { repo: "nicocha30/ligolo-ng", regex: "proxy_.*_windows_amd64.gz", location: "/opt/ligolo-ng" }
+    - { repo: "DominicBreuker/pspy", regex: "^pspy32$", location: "/opt/pspy" }
+    - { repo: "DominicBreuker/pspy", regex: "^pspy32s$", location: "/opt/pspy" }
+    - { repo: "DominicBreuker/pspy", regex: "^pspy64$", location: "/opt/pspy" }
+    - { repo: "DominicBreuker/pspy", regex: "^pspy64s$", location: "/opt/pspy" }
+    - { repo: "iBotPeaches/Apktool",  regex: "apktool_", location: "/opt/apktool" }
+    - { repo: "rizinorg/cutter",  regex: "Linux-x86_64", location: "/opt/cutter" }
+  async: 45
+  poll: 0
+  become: true
+  become_method: sudo
+
+- name: Remove temporary build directory
+  ansible.builtin.file:
+    path: "{{ build_dir.path }}"
+    state: absent
+  when: build_dir.path is defined

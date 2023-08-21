@@ -1,0 +1,8 @@
+---
+- include: pimpmykali.yml
+- include: apt-installs.yml
+- include: kerbrute.yml
+- include: gem-tools.yml
+- include: python-tools.yml
+- include: install-debuggers.yml
+- include: github-repos.yml

@@ -1,0 +1,38 @@
+---
+- name: "Customizing Kali"
+  hosts: localhost
+  connection: local
+  vars:
+    current_user: "{{ ansible_user_id }}"
+  tasks:
+    - name: "Sanity Check"
+      debug:
+        msg: "sanity confirmed"
+    - name: "Check variable"
+      debug:
+        msg: "{{ ansible_user_id }}"
+    - name: "Change hostname"
+      hostname:
+        name: "transistor"
+        use: "systemd"
+    - name: "Set default shell to bash"
+        become: yes
+        user:
+          name: "{{ current_user }}"
+          shell: /bin/bash
+
+  roles:
+    - role: "roles/configure-tmux"
+    - role: "roles/customize-browser"
+    - role: "roles/install-tools"
+    - role: "gantsign.visual-studio-code"
+      users:            
+        - username: "{{ ansible_user_id }}"
+          visual_studio_code_extensions:
+            - ms-python.python
+            - enkia.tokyo-night
+            - ms-vscode.sublime-keybindings
+            - 13xforever.language-x86-64-assembly
+            - usernamehw.errorlens
+            - ms-vscode.cpptools
+

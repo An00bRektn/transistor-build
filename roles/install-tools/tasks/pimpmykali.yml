@@ -1,0 +1,12 @@
+---
+- name: "Clone an00brektn/pimpmykali"
+  git:
+    repo: "https://github.com/an00brektn/pimpmykali"
+    dest: "{{ ansible_env.HOME }}/Documents/pimpmykali"
+- name: "Run an00brektn/pimpmykali"
+  shell: "./pimpmykali.sh --all"
+  args:
+    chdir: "{{ ansible_env.HOME }}/Documents/pimpmykali"
+    creates: "{{ ansible_env.HOME }}/Documents/pimpmykali/pimpmykali.log"
+  become: true
+  become_method: sudo

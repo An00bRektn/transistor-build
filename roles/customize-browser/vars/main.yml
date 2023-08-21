@@ -1,0 +1,5 @@
+---
+burpsuite_extras_dir: "/usr/local/lib/BurpSuite"
+FirefoxPlugins:
+  - "foxyproxy-standard"
+  - "wappalyzer"

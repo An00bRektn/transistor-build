@@ -1,0 +1,30 @@
+---
+- name: "Install pip tools/libraries"
+  pip:
+    name:
+      - pwntools
+      - ropper
+      - waitress
+      - pyftpdlib
+      - defaultcreds-cheat-sheet
+
+- name: "Install pip tools"
+  community.general.pipx:
+    name: "{{ item.name }}"
+    source: "{{ item.source }}"
+    state: latest
+  loop:
+    - { name: 'certipy-ad', source: 'git+https://github.com/ly4k/Certipy.git' }
+
+- name: "Clone an00brektn/up-http-tool"
+  git:
+    repo: "https://github.com/an00brektn/up-http-tool"
+    dest: "/opt/up-http-tool"
+  become: true
+  become_method: sudo
+
+- name: "Install an00brektn/up-http-tool"
+  copy:
+    src: "/opt/up-http-tool/up"
+    dest: "{{ ansible_env.HOME }}/.local/bin/"
+    mode: '0755'

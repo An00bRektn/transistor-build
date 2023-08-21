@@ -1,0 +1,11 @@
+---
+- name: "Installing gem tools"
+  gem:
+    name: "{{ item }}"
+    state: latest
+  loop:
+    - evil-winrm
+    - one_gadget
+    - seccomp-tools
+  become: true
+  become_method: sudo

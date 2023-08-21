@@ -1,0 +1,26 @@
+---
+- name: "Clone pwndbg"
+  git:
+    repo: "https://github.com/pwndbg/pwndbg"
+    dest: "/opt/pwndbg"
+  become: true
+  become_method: sudo
+
+- name: "Make directory for gef"
+  file:
+    path: "/opt/gef"
+    state: directory
+  become: true
+  become_method: sudo
+
+- name: "Download hugsy/gef"
+  get_url:
+    url: https://gef.blah.cat/py
+    dest: /opt/gef/.gdbinit-gef.py
+  become: true
+  become_method: sudo
+
+- name: "Create gdbinit"
+  shell: echo source /opt/gef/.gdbinit-gef >> {{ ansible_env.HOME }}/.gdbinit-gef
+  args:
+    creates: "{{ ansible_env.HOME }}/.gdbinit-gef"
